@@ -1,4 +1,4 @@
-Initial Stock,Pond Age (Days),Food Intake (kg),Climate,Prawn Count per kg
+Initial Stock,Age_of_Pond,Food_Intake,Season,Prawn_Count
 50000,1,4.0,Summer,Unpredictable
 50000,2,4.0,Summer,Unpredictable
 50000,3,4.0,Summer,Unpredictable

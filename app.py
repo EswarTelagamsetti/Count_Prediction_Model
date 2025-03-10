@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import pickle
 import numpy as np
+import pandas as pd
+
+app = Flask(__name__)
 
 # Load the trained model and label encoder
 model, label_encoder = pickle.load(open("prawn_model.pkl", "rb"))
-
-app = Flask(__name__)
 
 @app.route('/')
 def home():
@@ -14,20 +15,21 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        age_of_pond = float(request.form['age_of_pond'])
-        food_intake = float(request.form['food_intake'])
-        season = request.form['season']
-        
-        # Encode season
+        data = request.form
+        age = float(data['Age_of_Pond'])
+        food = float(data['Food_Intake'])
+        season = data['Season']
+
+        # Convert season to encoded number
         season_encoded = label_encoder.transform([season])[0]
-        
-        # Prepare input for prediction
-        features = np.array([[age_of_pond, food_intake, season_encoded]])
+
+        # Ensure correct feature names to match training
+        features = pd.DataFrame([[age, food, season_encoded]], columns=['Age_of_Pond', 'Food_Intake', 'Season'])
+
         prediction = model.predict(features)[0]
-        
-        return jsonify({'prawn_count': round(prediction, 2)})
+        return jsonify({'prediction': round(prediction)})
     except Exception as e:
         return jsonify({'error': str(e)})
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

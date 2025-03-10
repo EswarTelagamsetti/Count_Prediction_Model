@@ -3,44 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prawn Count Estimation</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <title>Prawn Count Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Prawn Count Estimation</h1>
-        <form id="prediction-form">
-            <label for="age_of_pond">Age of Pond (in days):</label>
-            <input type="number" id="age_of_pond" name="age_of_pond" required>
-            
-            <label for="food_intake">Food Intake per day (kg per 1 lakh prawns):</label>
-            <input type="number" step="0.01" id="food_intake" name="food_intake" required>
-            
-            <label for="season">Season:</label>
-            <select id="season" name="season" required>
+        <h2>Prawn Count Prediction</h2>
+        <form id="predictForm">
+            <label>Age of Pond:</label>
+            <input type="number" name="Age_of_Pond" required>
+
+            <label>Food Intake:</label>
+            <input type="number" name="Food_Intake" required>
+
+            <label>Season:</label>
+            <select name="Season">
                 <option value="Summer">Summer</option>
                 <option value="Winter">Winter</option>
                 <option value="Rainy">Rainy</option>
             </select>
-            
+
             <button type="submit">Predict</button>
         </form>
-        <h2 id="result"></h2>
+        <p id="result"></p>
     </div>
 
     <script>
-        document.getElementById("prediction-form").addEventListener("submit", async function(event) {
+        document.getElementById("predictForm").onsubmit = async function(event) {
             event.preventDefault();
-            
-            const formData = new FormData(this);
-            const response = await fetch("/predict", {
-                method: "POST",
-                body: formData
-            });
-            
-            const result = await response.json();
-            document.getElementById("result").textContent = result.error ? "Error: " + result.error : "Predicted Prawn Count: " + result.predicted_count;
-        });
+            let formData = new FormData(this);
+            let response = await fetch("/predict", { method: "POST", body: formData });
+            let result = await response.json();
+            document.getElementById("result").innerText = result.prediction ? "Predicted Count: " + result.prediction : "Error: " + result.error;
+        };
     </script>
 </body>
 </html>
